@@ -129,7 +129,7 @@ export class ComboBoxComponent implements OnInit, ControlValueAccessor {
                 this.searchTerm = "";
         }
         // if not tab, shift or keys
-        if([9, 16, 17, 13].indexOf(event.keyCode)===-1){
+        if([9, 16, 17, 13, 27].indexOf(event.keyCode)===-1){
             this.showList = true;
             this.refreshList();
         }
