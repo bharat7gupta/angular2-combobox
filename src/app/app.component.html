@@ -1,29 +1,20 @@
-<h3>
-  Angular 2 Seed
-</h3>
-<nav>
-	<a [routerLink]="['/']">
-    Home
-  </a>
-  |
-	<a [routerLink]="['/about']">
-    About
-  </a>
-  |
-	<a [routerLink]="['/github', 'angular']">
-    Github Repos
-  </a>
-  |
-	<a [routerLink]="['/contact']">
-    Contact Us
-  </a>
-</nav>
+<div class="container">
+  <h3>
+    Angular 2 Combobox
+  </h3>
 
-<main>
-	<router-outlet></router-outlet>
-</main>
-
-
-<footer>
-  © 2017
-</footer>
+  <div class="row">
+    <div class="col-md-6">
+      <combo-box 
+        [list]="options" 
+        [displayFieldName]="'full_name'" 
+        [valueFieldName]="'id'" 
+        [(ngModel)]="selectedValue">
+      </combo-box>
+    </div>
+    <div class="col-md-6">
+      <p>Selected Value: </p>
+      {{selectedValue | json: 4}}
+    </div>
+  </div>
+</div>

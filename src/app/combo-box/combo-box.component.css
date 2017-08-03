@@ -1,0 +1,27 @@
+.list {
+    min-width: 100%;
+    max-height: 250px;
+    overflow: auto;
+}
+
+.list li a{
+    padding-left: 12px;
+}
+
+.btn-show-list{
+    cursor: pointer;
+}
+
+.form-control {
+    height: 38px;
+}
+
+.invalid-input {
+    border: 1px solid #a94442;
+    border-right: none;
+}
+
+.invalid-caret {
+    border: 1px solid #a94442;
+    border-left: none;
+}

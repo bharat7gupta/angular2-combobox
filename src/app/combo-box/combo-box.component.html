@@ -1,0 +1,20 @@
+<div class="dropdown">
+    <div class="input-group" [class.open]="showList">
+        <input type="text" autocomplete="off" #searchBox
+                class="form-control" [(ngModel)]="searchTerm"
+                (keyup)="navigateList($event);" 
+                (keydown)="handleKeyDown($event);" 
+                [class.invalid-input]="invalid" />
+        <ul class="dropdown-menu list">
+            <li *ngFor="let listItem of currentList" 
+                        [class.active]="this.tempCurrent && this.tempCurrent[this.valueFieldName]===listItem[this.valueFieldName]"
+                        (mouseover)="tempCurrent = listItem">
+                <a href="javascript:void(0);" (click)="setValue(listItem)">{{listItem[this.displayFieldName]}}</a>
+            </li>
+        </ul>
+        <span class="input-group-addon btn-show-list" 
+            (click)="searchBox.focus(); toggleListDisplay()" [class.invalid-caret]="invalid">
+                <span class="caret dropdown-toggle"></span>
+        </span>
+    </div>
+</div>
