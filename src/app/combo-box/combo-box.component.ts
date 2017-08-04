@@ -1,5 +1,7 @@
-import { Component, OnInit, ElementRef, Input, forwardRef, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, forwardRef, ViewChild, ViewChildren, QueryList, AfterViewChecked } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+
+declare var $: any;
 
 // combo-box to select from a list of items
 @Component({
@@ -17,7 +19,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         '(document:click)': 'onClickOutside($event)'
     }
 })
-export class ComboBoxComponent implements OnInit, ControlValueAccessor {
+export class ComboBoxComponent implements OnInit, AfterViewChecked, ControlValueAccessor {
     private oldSearchTerm: string; // keeps track of the previous search term
     private _currentVal: any; // the current selected item
     private initialValue: any = {};
@@ -27,6 +29,9 @@ export class ComboBoxComponent implements OnInit, ControlValueAccessor {
     @Input() displayFieldName: string; // the field to be used for display
     @Input() valueFieldName: string; // the field to be used for value comparison
   
+    @ViewChild("list") listEl: ElementRef;
+    @ViewChildren("listItemEls") listItemEls: QueryList<ElementRef>;
+
     tempCurrent: any; // the highlighted element
     searchTerm: string; // the search text in the text-part of the combobox
     currentList: any[]; // the filtered list of possible values
@@ -66,7 +71,7 @@ export class ComboBoxComponent implements OnInit, ControlValueAccessor {
             throw "Invalid displayFieldName";
 
         if(!this.valueFieldName || this.valueFieldName===null)
-            throw "Invalid displayFieldName";
+            throw "Invalid valueFieldName";
 
         this.currentList = this.list;
         this.initialValue[this.displayFieldName] = "--- Please select ---";
@@ -82,6 +87,35 @@ export class ComboBoxComponent implements OnInit, ControlValueAccessor {
             let currentIndex = this.getSelectedIndex();
             if(currentIndex === -1 && this.currentList[0]){
                 this.tempCurrent = this.currentList[0];
+            }
+        }
+    }
+    
+    ngAfterViewChecked() {
+        if(this.showList) {
+            let elementToFocus = this.listItemEls.find((listItem, i, array) => {
+                return listItem.nativeElement.className.indexOf("active") >= 0;
+            });
+
+            let elementOffset = elementToFocus.nativeElement.offsetTop + elementToFocus.nativeElement.offsetHeight;
+            let listHeight = this.listEl.nativeElement.scrollTop + this.listEl.nativeElement.offsetHeight;
+            let offsetDiff = elementOffset - listHeight;
+
+            // rolling down from up
+            if(offsetDiff > this.listEl.nativeElement.offsetHeight) { 
+                this.listEl.nativeElement.scrollTop = this.listEl.nativeElement.offsetHeight + this.listEl.nativeElement.clientHeight;
+            }
+            // moving down the list
+            else if(offsetDiff > 0) {
+                this.listEl.nativeElement.scrollTop += elementToFocus.nativeElement.offsetHeight;
+            }
+            // rolling up from down
+            else if((this.listEl.nativeElement.scrollTop - elementToFocus.nativeElement.offsetTop) > this.listEl.nativeElement.offsetHeight) {
+                this.listEl.nativeElement.scrollTop = 0;
+            }
+            // moving up the list
+            else if(elementToFocus.nativeElement.offsetTop < this.listEl.nativeElement.scrollTop) {
+                this.listEl.nativeElement.scrollTop -= elementToFocus.nativeElement.offsetHeight;
             }
         }
     }
