@@ -97,25 +97,21 @@ export class ComboBoxComponent implements OnInit, AfterViewChecked, ControlValue
                 return listItem.nativeElement.className.indexOf("active") >= 0;
             });
 
-            let elementOffset = elementToFocus.nativeElement.offsetTop + elementToFocus.nativeElement.offsetHeight;
-            let listHeight = this.listEl.nativeElement.scrollTop + this.listEl.nativeElement.offsetHeight;
-            let offsetDiff = elementOffset - listHeight;
+            let viewableWindow = {
+                start: this.listEl.nativeElement.scrollTop,
+                end: this.listEl.nativeElement.scrollTop + this.listEl.nativeElement.offsetHeight
+            };
+            let itemOffset = {
+                start: elementToFocus.nativeElement.offsetTop,
+                end: elementToFocus.nativeElement.offsetTop + elementToFocus.nativeElement.offsetHeight
+            };
 
-            // rolling down from up
-            if(offsetDiff > this.listEl.nativeElement.offsetHeight) { 
-                this.listEl.nativeElement.scrollTop = this.listEl.nativeElement.offsetHeight + this.listEl.nativeElement.clientHeight;
-            }
-            // moving down the list
-            else if(offsetDiff > 0) {
-                this.listEl.nativeElement.scrollTop += elementToFocus.nativeElement.offsetHeight;
-            }
-            // rolling up from down
-            else if((this.listEl.nativeElement.scrollTop - elementToFocus.nativeElement.offsetTop) > this.listEl.nativeElement.offsetHeight) {
-                this.listEl.nativeElement.scrollTop = 0;
-            }
-            // moving up the list
-            else if(elementToFocus.nativeElement.offsetTop < this.listEl.nativeElement.scrollTop) {
-                this.listEl.nativeElement.scrollTop -= elementToFocus.nativeElement.offsetHeight;
+            // scroll if item is not already within viewable window
+            if(itemOffset.end > viewableWindow.end) {
+                this.listEl.nativeElement.scrollTop += itemOffset.end - viewableWindow.end + 5;
+            } 
+            else if(viewableWindow.start > itemOffset.start) {
+                this.listEl.nativeElement.scrollTop -= viewableWindow.start - itemOffset.start + 5;
             }
         }
     }
